@@ -3,13 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="35dp">
+        android:layout_height="match_parent">
 
         <ImageView
             android:id="@+id/icon"
@@ -19,7 +17,7 @@
             android:layout_alignParentTop="true"
             android:layout_marginStart="20dp"
             android:layout_marginTop="27dp"
-            tools:srcCompat="@tools:sample/avatars" />
+            android:src="@drawable/ic_baseline_scatter_plot_24" />
 
         <TextView
             android:id="@+id/title_bool"
@@ -47,7 +45,7 @@
             />
 
         <Switch
-            android:id="@+id/switch1"
+            android:id="@+id/switch_bool"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"

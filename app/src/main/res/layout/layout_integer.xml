@@ -2,13 +2,11 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="-36dp"
         android:gravity="center_horizontal">
 
         <ImageView
@@ -19,8 +17,7 @@
             android:layout_alignParentTop="true"
             android:layout_marginStart="20dp"
             android:layout_marginTop="27dp"
-            tools:srcCompat="@tools:sample/avatars"
-            />
+            android:src="@drawable/ic_baseline_scatter_plot_24"/>
 
         <TextView
             android:id="@+id/title_integer"

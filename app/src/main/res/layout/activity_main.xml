@@ -7,29 +7,16 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
-        <LinearLayout
-            android:id="@+id/all_device_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+    <include layout="@layout/all_device"></include>
 
-        </LinearLayout>
-    </ScrollView>
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="vertical"
-        android:id="@+id/all_properties_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        ></LinearLayout>
+    <include layout="@layout/detail_device"></include>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/fab"
+        android:layout_gravity="right|bottom"
+        android:contentDescription="Refresh"
+        android:layout_margin="16dp"
+        android:clickable="true"
+        android:src="@drawable/ic_baseline_refresh_24"/>
 </LinearLayout>
