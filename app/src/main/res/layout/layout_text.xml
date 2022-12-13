@@ -3,8 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content" >
-
+    android:layout_height="wrap_content">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:ignore="MissingConstraints">
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_margin="10dp"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="10dp"
+        tools:ignore="MissingConstraints">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -17,8 +27,8 @@
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:layout_marginStart="20dp"
-            android:layout_marginTop="27dp"
-            android:src="@drawable/ic_baseline_scatter_plot_24"
+            android:layout_marginTop="15dp"
+            android:src="@drawable/ic_baseline_edit_note_24"
             />
 
         <TextView
@@ -27,7 +37,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_marginStart="20dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
             android:layout_marginEnd="20dp"
             android:layout_toEndOf="@+id/icon"
             android:text="TextView"
@@ -49,5 +59,6 @@
 
 
     </RelativeLayout>
-
+    </androidx.cardview.widget.CardView>
+    </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
