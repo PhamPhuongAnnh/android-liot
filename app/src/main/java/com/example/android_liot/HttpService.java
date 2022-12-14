@@ -17,30 +17,27 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Stack;
 
-public class Controller {
-    Stack<JSONObject> properties = new Stack<>();
+public class HttpService {
     ArrayList<String> devices_url = new ArrayList<>();
+    String url;
     RequestQueue mQueue;
     Context context;
 
-    public Controller(Context context) {
+    public HttpService(Context context) {
         this.context = context;
         devices_url.add("http://192.168.71.1/schema");
         mQueue = Volley.newRequestQueue(context);
         jsonParse();
+ne
+    }
+
+    public ArrayList<getListDevice() {
 
     }
-    void jsonParse() {
-        String ret = context.getString(R.string.example_schema);
-        try {
-            JSONObject response = new JSONObject(ret);
-            properties.clear();
-            properties.push(response);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+    void setUrl(String url) {
 
     }
+
     void jsonParse(String url) {
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
@@ -55,7 +52,7 @@ public class Controller {
                                 String key = keys.next();
                                 JSONObject value = json_properties.getJSONObject(key);
                                 properties.add(value);
-                                Log.i("log" , value.toString());
+                                Log.i("log", value.toString());
                             }
 
 

@@ -7,16 +7,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
-
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -27,16 +19,17 @@ import java.util.Stack;
 
 public class MainActivity extends AppCompatActivity {
     Stack<JSONObject> properties = new Stack<>();
+    ArrayList<Device> devices = new ArrayList<>();
 
     LinearLayout all_device_layout;
     LinearLayout detail_device_layout;
     Button btnBack;
-    Controller controller;
+    HttpService controller;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        controller = new Controller(this);
+        controller = new HttpService(this);
 
         setContentView(R.layout.activity_main);
         all_device_layout = findViewById(R.id.all_device_layout);
@@ -70,12 +63,18 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    View objectToView(JSONObject obj) {
-        Log.i("log", obj.toString());
+    void viewAllDevice() {
+
+    }
+    void viewDevice() {
+
+    }
+    View objectToView(JSONObject field) {
+        Log.i("log", field.toString());
         try {
-            String id_str = obj.getString("id");
-            String title_str = obj.getString("title");
-            String obj_type = obj.getString("type");
+            String id_str = field.getString("id");
+            String title_str = field.getString("title");
+            String obj_type = field.getString("type");
             if (obj_type.equals("bool")) {
                 View view = getLayoutInflater().inflate(R.layout.layout_bool, null);
                 TextView title = view.findViewById(R.id.title_bool);
@@ -92,7 +91,12 @@ public class MainActivity extends AppCompatActivity {
                 view.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-
+                        try {
+                            properties.push(field.getJSONObject("properties"));
+                            showDetail();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
                 });
                 TextView title = view.findViewById(R.id.title_object);
