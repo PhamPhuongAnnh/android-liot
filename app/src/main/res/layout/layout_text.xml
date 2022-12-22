@@ -26,7 +26,7 @@
             android:layout_height="50dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_marginStart="20dp"
+            android:layout_marginStart="50dp"
             android:layout_marginTop="15dp"
             android:src="@drawable/ic_baseline_edit_note_24"
             />
@@ -48,15 +48,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/title_text"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="20dp"
-            android:layout_toEndOf="@+id/icon"
+            android:layout_toRightOf="@id/icon"
             android:ems="40"
-            android:inputType="textPersonName"
-            />
+            android:inputType="textPersonName"/>
 
+        <ImageButton
+            android:id="@+id/text_field_send"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_below="@id/title_text"
+            android:layout_toRightOf="@id/text_field_text"
+            android:background="#00000000"
+            android:src="@drawable/ic_baseline_send_24"
+            android:layout_marginEnd="45dp"
+            android:layout_marginBottom="10dp"/>
 
     </RelativeLayout>
     </androidx.cardview.widget.CardView>

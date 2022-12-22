@@ -24,6 +24,9 @@
                     android:layout_height="wrap_content"
                     android:text="Device name"
                     android:textSize="25dp" />
+
+
+
             </RelativeLayout>
         </androidx.cardview.widget.CardView>
     </RelativeLayout>
