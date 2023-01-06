@@ -3,12 +3,14 @@ package com.example.android_liot;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
+import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,8 +22,12 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.eclipse.paho.android.service.MqttAndroidClient;
+import org.eclipse.paho.client.mqttv3.MqttCallback;
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -39,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     Button btnBack;
     RequestQueue mQueue;
     Context context;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,16 +56,18 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         all_device_layout = findViewById(R.id.all_device_layout);
         detail_device_layout = findViewById(R.id.detail_device_layout);
-
-
         for (int i = 0; i < device_ips.size(); i++) {
             selectedIp = device_ips.get(i);
             View view = getLayoutInflater().inflate(R.layout.device_card, null);
             TextView name1 = view.findViewById(R.id.device_name);
-            name1.setText("Device 1");
+            TextView des1 = view.findViewById(R.id.device_description);
+            name1.setText("Device " + (i + 1));
+            des1.setText(device_ips.get(i));
+            int finalI = i;
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    selectedIp = device_ips.get(finalI);
                     JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, "http://" + selectedIp + "/schema", null, new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
@@ -94,17 +103,54 @@ public class MainActivity extends AppCompatActivity {
         if (properties.empty()) {
             findViewById(R.id.all_device_layout_parent).setVisibility(View.VISIBLE);
             findViewById(R.id.detail_device_layout_parent).setVisibility(View.GONE);
+
+            all_device_layout.removeAllViews();
+            for (int i = 0; i < device_ips.size(); i++) {
+                selectedIp = device_ips.get(i);
+                View view = getLayoutInflater().inflate(R.layout.device_card, null);
+                TextView name1 = view.findViewById(R.id.device_name);
+                TextView des1 = view.findViewById(R.id.device_description);
+                if (selectedIp.equals("192.168.71.1")) {
+                    name1.setText("New device");
+                } else {
+                    name1.setText("Device " + (i));
+                }
+                des1.setText(device_ips.get(i));
+                int finalI = i;
+                view.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        selectedIp = device_ips.get(finalI);
+                        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, "http://" + selectedIp + "/schema", null, new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                try {
+                                    response.put("type", "object");
+                                    properties.clear();
+                                    properties.push(response.getJSONObject("properties"));
+                                    findViewById(R.id.all_device_layout_parent).setVisibility(View.GONE);
+                                    findViewById(R.id.detail_device_layout_parent).setVisibility(View.VISIBLE);
+
+                                    showDetail();
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                            }
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Log.e("log", "onErrorResponse: ", error);
+                            }
+                        });
+                        mQueue.add(request);
+                    }
+                });
+                all_device_layout.addView(view);
+            }
         } else {
             showDetail();
         }
-
-    }
-
-    void viewAllDevice() {
-
-    }
-
-    void viewDevice() {
 
     }
 
@@ -126,6 +172,23 @@ public class MainActivity extends AppCompatActivity {
                     view = getLayoutInflater().inflate(R.layout.layout_bool, null);
                     TextView title = view.findViewById(R.id.title_bool);
                     Switch switch1 = view.findViewById(R.id.switch_bool);
+                    mQueue.add(new JsonObjectRequest(Request.Method.GET, "http://" + selectedIp + "/data?field=" + id_str, null, new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            try {
+                                boolean state = response.getBoolean("value");
+                                switch1.setChecked(state);
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                        }
+                    }));
                     title.setText(title_str);
                     switch1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                         @Override
@@ -137,9 +200,10 @@ public class MainActivity extends AppCompatActivity {
                                 e.printStackTrace();
                             }
 
-                            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, "http://" + selectedIp + "/data",obj, new Response.Listener<JSONObject>() {
+                            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, "http://" + selectedIp + "/data", obj, new Response.Listener<JSONObject>() {
                                 @Override
                                 public void onResponse(JSONObject response) {
+                                    Toast.makeText(context, "Request SEnt", Toast.LENGTH_SHORT).show();
                                 }
                             }, new Response.ErrorListener() {
                                 @Override
@@ -151,10 +215,61 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
                     detail_device_layout.addView(view);
-                } else if (obj_type.equals("integer")) {
+                } else if (obj_type.equals("number")) {
                     view = getLayoutInflater().inflate(R.layout.layout_integer, null);
                     TextView title = view.findViewById(R.id.title_integer);
+                    SeekBar seekBar = view.findViewById(R.id.seek_bar_integer);
+                    mQueue.add(new JsonObjectRequest(Request.Method.GET, "http://" + selectedIp + "/data?field=" + id_str, null, new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            try {
+                                seekBar.setProgress(response.getInt("value"));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+
+                        }
+                    }));
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        seekBar.setMin(field.getInt("minimum"));
+                    }
+                    seekBar.setMax(field.getInt("maximum"));
                     title.setText(title_str);
+                    seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                        @Override
+                        public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                        }
+
+                        @Override
+                        public void onStartTrackingTouch(SeekBar seekBar) {
+                        }
+
+                        @Override
+                        public void onStopTrackingTouch(SeekBar seekBar) {
+                            JSONObject obj = new JSONObject();
+                            try {
+                                obj.put(id_str, seekBar.getProgress());
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                            mQueue.add(new JsonObjectRequest(Request.Method.POST, "http://" + selectedIp + "/data", obj, new Response.Listener<JSONObject>() {
+                                @Override
+                                public void onResponse(JSONObject response) {
+                                    Toast.makeText(context, "Request SEnt", Toast.LENGTH_SHORT).show();
+                                }
+                            }, new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    Log.e("log", "onErrorResponse: ", error);
+                                }
+                            }));
+                        }
+                    });
                     detail_device_layout.addView(view);
                 } else if (obj_type.equals("object")) {
                     view = getLayoutInflater().inflate(R.layout.layout_object, null);
@@ -177,6 +292,26 @@ public class MainActivity extends AppCompatActivity {
                     TextView title = view.findViewById(R.id.title_text);
                     title.setText(title_str);
                     TextView textView = view.findViewById(R.id.text_field_text);
+                    mQueue.add(new JsonObjectRequest(Request.Method.GET, "http://" + selectedIp + "/data?field=" + id_str, null, new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            try {
+                                String text = response.getString("value");
+                                textView.setText(text);
+                                if (id_str.equals("wifi_status_ip") && selectedIp.equals("192.168.71.1") && !text.equals("0.0.0.0")) {
+                                    Log.i("log", "onResponse: store ip: " + text);
+                                    device_ips.add(text);
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+
+                        }
+                    }));
                     view.findViewById(R.id.text_field_send).setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -188,7 +323,7 @@ public class MainActivity extends AppCompatActivity {
                                 e.printStackTrace();
                             }
 
-                            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, "http://" + selectedIp + "/data",obj, new Response.Listener<JSONObject>() {
+                            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, "http://" + selectedIp + "/data", obj, new Response.Listener<JSONObject>() {
                                 @Override
                                 public void onResponse(JSONObject response) {
                                     Toast.makeText(context, "Request SEnt", Toast.LENGTH_SHORT).show();
