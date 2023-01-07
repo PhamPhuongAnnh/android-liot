@@ -1,22 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
-
-    <include layout="@layout/all_device"></include>
-
-    <include layout="@layout/detail_device"></include>
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    tools:context=".MainActivity"
+    android:background="#E9FBFB"
+    android:layout_gravity="center_vertical">
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/fab"
-        android:layout_gravity="right|bottom"
-        android:contentDescription="Refresh"
-        android:layout_margin="16dp"
-        android:clickable="true"
-        android:src="@drawable/ic_baseline_refresh_24"/>
-</LinearLayout>
+        tools:ignore="MissingConstraints">
+
+    <Button
+        android:id="@+id/main_login"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="320dp"
+        tools:ignore="NotSibling"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
+        android:text="Login"
+        android:textSize="25dp"
+        android:background="@drawable/rect_rounded_button"
+        app:cardCornerRadius="10dp"
+        android:textColor="@color/white"
+        />
+    <Button
+        android:id="@+id/main_signup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="380dp"
+        tools:ignore="NotSibling"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
+        android:text="Sign up"
+        android:textSize="25dp"
+        android:background="@drawable/rect_rounded_button"
+        app:cardCornerRadius="10dp"
+        android:textColor="@color/white"/>
+
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/infor"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:src="@drawable/ic_baseline_info_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:ignore="MissingConstraints" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
