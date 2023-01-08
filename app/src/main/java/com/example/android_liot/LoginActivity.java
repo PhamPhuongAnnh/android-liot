@@ -22,7 +22,6 @@ import org.json.JSONObject;
 
 public class LoginActivity extends AppCompatActivity {
     String loginUrl = "http://171.244.57.168:8080/api/account/name";
-    //String loginUrl = "http://192.168.103.23:8080/api/account/name";
     EditText login_username;
     EditText login_password;
     TextView forgot_password;

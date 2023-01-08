@@ -7,6 +7,7 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Stack;
 
 public class Singleton {
@@ -16,6 +17,8 @@ public class Singleton {
     public boolean loggedIn = false;
     public String username;
     public String password;
+    public String selectedIp;
+    public Stack<JSONObject> properties = new Stack<JSONObject>();
 
     public String getSelectedIp() {
         return selectedIp;
@@ -25,8 +28,6 @@ public class Singleton {
         this.selectedIp = selectedIp;
     }
 
-    public String selectedIp;
-    public Stack<JSONObject> properties = new Stack<JSONObject>();
 
 
     private Singleton(Context context) {

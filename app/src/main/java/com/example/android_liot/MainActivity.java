@@ -16,10 +16,19 @@ public class MainActivity extends AppCompatActivity {
     Button main_list_device;
     ImageView info;
     RequestQueue mQueue;
+
+    @Override
+    public void onBackPressed() {
+
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Intent intent = new Intent(MainActivity.this, ListDeviceActivity.class);
+        startActivity(intent);
+
         init();
         action();
 
@@ -33,33 +42,21 @@ public class MainActivity extends AppCompatActivity {
 
     }
     public void action(){
-        main_login.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                startActivity(intent);
-            }
+        main_login.setOnClickListener(view -> {
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(intent);
         });
-        main_signup.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, SignupActivity.class);
-                startActivity(intent);
-            }
+        main_signup.setOnClickListener(view -> {
+            Intent intent = new Intent(MainActivity.this, SignupActivity.class);
+            startActivity(intent);
         });
-        main_list_device.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, ListDeviceActivity.class);
-                startActivity(intent);
-            }
+        main_list_device.setOnClickListener(view -> {
+            Intent intent = new Intent(MainActivity.this, ListDeviceActivity.class);
+            startActivity(intent);
         });
-        info.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, AppInfoActivity.class);
-                startActivity(intent);
-            }
+        info.setOnClickListener(view -> {
+            Intent intent = new Intent(MainActivity.this, AppInfoActivity.class);
+            startActivity(intent);
         });
     }
 }

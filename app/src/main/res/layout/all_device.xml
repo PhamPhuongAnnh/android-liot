@@ -4,23 +4,23 @@
     android:layout_height="match_parent"
     android:id="@+id/all_device_layout_parent"
     android:orientation="vertical">
-    <Toolbar
-        android:id="@+id/toolbar"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:background="#00000000">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="30dp"
-                android:text="Danh sách thiết bị"/>
-
-    </Toolbar>
+        android:id="@+id/toolbar_frame">
+        <include layout="@layout/toolbar"/>
+    </FrameLayout>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/toolbar_frame"
+        android:id="@+id/login_frame">
+        <include layout="@layout/login_signup_card"/>
+    </FrameLayout>
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/toolbar"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/login_frame"
         android:layout_alignParentEnd="true">
         <LinearLayout
             android:id="@+id/all_device_layout"

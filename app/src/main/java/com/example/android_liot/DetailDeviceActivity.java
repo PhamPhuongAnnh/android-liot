@@ -68,13 +68,12 @@ public class DetailDeviceActivity extends AppCompatActivity {
                 String title_str = field.getString("title");
                 String obj_type = field.getString("type");
 
-                if (obj_type.equals("bool")) {
-                    view = getLayoutInflater().inflate(R.layout.layout_bool, null);
-                    TextView title = view.findViewById(R.id.title_bool);
-                    Switch switch1 = view.findViewById(R.id.switch_bool);
-                    mQueue.add(new JsonObjectRequest(Request.Method.GET, "http://" + selectedIp + "/data?field=" + id_str, null, new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject response) {
+                switch (obj_type) {
+                    case "bool": {
+                        view = getLayoutInflater().inflate(R.layout.layout_bool, null);
+                        TextView title = view.findViewById(R.id.title_bool);
+                        Switch switch1 = view.findViewById(R.id.switch_bool);
+                        mQueue.add(new JsonObjectRequest(Request.Method.GET, "http://" + selectedIp + "/data?field=" + id_str, null, response -> {
                             try {
                                 boolean state = response.getBoolean("value");
                                 switch1.setChecked(state);
@@ -83,16 +82,10 @@ public class DetailDeviceActivity extends AppCompatActivity {
                                 e.printStackTrace();
                             }
 
-                        }
-                    }, new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                        }
-                    }));
-                    title.setText(title_str);
-                    switch1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                        @Override
-                        public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                        }, error -> {
+                        }));
+                        title.setText(title_str);
+                        switch1.setOnCheckedChangeListener((compoundButton, b) -> {
                             JSONObject obj = new JSONObject();
                             try {
                                 obj.put(id_str, b);
@@ -112,110 +105,103 @@ public class DetailDeviceActivity extends AppCompatActivity {
                                 }
                             });
                             mQueue.add(request);
-                        }
-                    });
-                    detail_device_layout.addView(view);
-                } else if (obj_type.equals("number")) {
-                    view = getLayoutInflater().inflate(R.layout.layout_integer, null);
-                    TextView title = view.findViewById(R.id.title_integer);
-                    SeekBar seekBar = view.findViewById(R.id.seek_bar_integer);
-                    mQueue.add(new JsonObjectRequest(Request.Method.GET, "http://" + selectedIp + "/data?field=" + id_str, null, new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject response) {
+                        });
+                        detail_device_layout.addView(view);
+                        break;
+                    }
+                    case "number": {
+                        view = getLayoutInflater().inflate(R.layout.layout_integer, null);
+                        TextView title = view.findViewById(R.id.title_integer);
+                        SeekBar seekBar = view.findViewById(R.id.seek_bar_integer);
+                        mQueue.add(new JsonObjectRequest(Request.Method.GET, "http://" + selectedIp + "/data?field=" + id_str, null, response -> {
                             try {
                                 seekBar.setProgress(response.getInt("value"));
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
-                        }
-                    }, new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
+                        }, error -> {
 
+                        }));
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            seekBar.setMin(field.getInt("minimum"));
                         }
-                    }));
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        seekBar.setMin(field.getInt("minimum"));
+                        seekBar.setMax(field.getInt("maximum"));
+                        title.setText(title_str);
+                        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                            @Override
+                            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                            }
+
+                            @Override
+                            public void onStartTrackingTouch(SeekBar seekBar) {
+                            }
+
+                            @Override
+                            public void onStopTrackingTouch(SeekBar seekBar) {
+                                JSONObject obj = new JSONObject();
+                                try {
+                                    obj.put(id_str, seekBar.getProgress());
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                                mQueue.add(new JsonObjectRequest(Request.Method.POST, "http://" + selectedIp + "/data", obj, new Response.Listener<JSONObject>() {
+                                    @Override
+                                    public void onResponse(JSONObject response) {
+                                        Toast.makeText(context, "Request SEnt", Toast.LENGTH_SHORT).show();
+                                    }
+                                }, new Response.ErrorListener() {
+                                    @Override
+                                    public void onErrorResponse(VolleyError error) {
+                                        Log.e("log", "onErrorResponse: ", error);
+                                    }
+                                }));
+                            }
+                        });
+                        detail_device_layout.addView(view);
+                        break;
                     }
-                    seekBar.setMax(field.getInt("maximum"));
-                    title.setText(title_str);
-                    seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                        @Override
-                        public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                        }
-
-                        @Override
-                        public void onStartTrackingTouch(SeekBar seekBar) {
-                        }
-
-                        @Override
-                        public void onStopTrackingTouch(SeekBar seekBar) {
-                            JSONObject obj = new JSONObject();
-                            try {
-                                obj.put(id_str, seekBar.getProgress());
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-
-                            mQueue.add(new JsonObjectRequest(Request.Method.POST, "http://" + selectedIp + "/data", obj, new Response.Listener<JSONObject>() {
-                                @Override
-                                public void onResponse(JSONObject response) {
-                                    Toast.makeText(context, "Request SEnt", Toast.LENGTH_SHORT).show();
+                    case "object": {
+                        view = getLayoutInflater().inflate(R.layout.layout_object, null);
+                        view.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                try {
+                                    singleton.getProperties().push(field.getJSONObject("properties"));
+                                    finish();
+                                    startActivity(getIntent());
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
                                 }
-                            }, new Response.ErrorListener() {
-                                @Override
-                                public void onErrorResponse(VolleyError error) {
-                                    Log.e("log", "onErrorResponse: ", error);
-                                }
-                            }));
-                        }
-                    });
-                    detail_device_layout.addView(view);
-                } else if (obj_type.equals("object")) {
-                    view = getLayoutInflater().inflate(R.layout.layout_object, null);
-                    view.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            try {
-                                singleton.getProperties().push(field.getJSONObject("properties"));
-                                finish();
-                                startActivity(getIntent());
-                            } catch (JSONException e) {
-                                e.printStackTrace();
                             }
-                        }
-                    });
-                    TextView title = view.findViewById(R.id.title_object);
-                    title.setText(title_str);
-                    detail_device_layout.addView(view);
-                } else {
-                    view = getLayoutInflater().inflate(R.layout.layout_text, null);
-                    TextView title = view.findViewById(R.id.title_text);
-                    title.setText(title_str);
-                    TextView textView = view.findViewById(R.id.text_field_text);
-//                    mQueue.add(new JsonObjectRequest(Request.Method.GET, "http://" + selectedIp + "/data?field=" + id_str, null, new Response.Listener<JSONObject>() {
-//                        @Override
-//                        public void onResponse(JSONObject response) {
-//                            try {
-//                                String text = response.getString("value");
-//                                textView.setText(text);
-//                                if (id_str.equals("wifi_status_ip") && selectedIp.equals("192.168.71.1") && !text.equals("0.0.0.0")) {
-//                                    Log.i("log", "onResponse: store ip: " + text);
-//                                    device_ips.add(text);
-//                                }
-//                            } catch (JSONException e) {
-//                                e.printStackTrace();
-//                            }
-//                        }
-//                    }, new Response.ErrorListener() {
-//                        @Override
-//                        public void onErrorResponse(VolleyError error) {
-//
-//                        }
-//                    }));
-                    view.findViewById(R.id.text_field_send).setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
+                        });
+                        TextView title = view.findViewById(R.id.title_object);
+                        title.setText(title_str);
+                        detail_device_layout.addView(view);
+                        break;
+                    }
+                    default: {
+                        view = getLayoutInflater().inflate(R.layout.layout_text, null);
+                        TextView title = view.findViewById(R.id.title_text);
+                        title.setText(title_str);
+                        TextView textView = view.findViewById(R.id.text_field_text);
+                        mQueue.add(new JsonObjectRequest(Request.Method.GET, "http://" + selectedIp + "/data?field=" + id_str, null, new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                try {
+                                    String text = response.getString("value");
+                                    textView.setText(text);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+
+                            }
+                        }));
+                        view.findViewById(R.id.text_field_send).setOnClickListener(view1 -> {
                             String content = textView.getText().toString();
                             JSONObject obj = new JSONObject();
                             try {
@@ -224,22 +210,16 @@ public class DetailDeviceActivity extends AppCompatActivity {
                                 e.printStackTrace();
                             }
 
-                            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, "http://" + selectedIp + "/data", obj, new Response.Listener<JSONObject>() {
-                                @Override
-                                public void onResponse(JSONObject response) {
-                                    Toast.makeText(context, "Request SEnt", Toast.LENGTH_SHORT).show();
-                                }
-                            }, new Response.ErrorListener() {
-                                @Override
-                                public void onErrorResponse(VolleyError error) {
-                                    Log.e("log", "onErrorResponse: ", error);
-                                }
-                            });
-                            mQueue.add(request);
+                            mQueue.add(new JsonObjectRequest(Request.Method.POST, "http://" + selectedIp + "/data", obj, response -> {
+                                Toast.makeText(context, "Request SEnt", Toast.LENGTH_SHORT).show();
+                            }, error -> {
+                                Log.e("log", "onErrorResponse: ", error);
+                            }));
 
-                        }
-                    });
-                    detail_device_layout.addView(view);
+                        });
+                        detail_device_layout.addView(view);
+                        break;
+                    }
                 }
             }
         } catch (JSONException e) {
