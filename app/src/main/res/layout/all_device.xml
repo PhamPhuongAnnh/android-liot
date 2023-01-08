@@ -27,6 +27,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+            <include layout="@layout/device_card"/>
         </LinearLayout>
     </ScrollView>
 
@@ -35,5 +36,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
+        android:layout_marginBottom="20dp" android:layout_marginRight="20dp"
         android:src="@drawable/ic_baseline_refresh_24"/>
 </RelativeLayout>

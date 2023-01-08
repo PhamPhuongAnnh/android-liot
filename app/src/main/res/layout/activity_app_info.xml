@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".inforApp" android:background="#E9FBFB"
+    tools:context=".AppInfoActivity" android:background="#E9FBFB"
     >
 
     <androidx.cardview.widget.CardView
