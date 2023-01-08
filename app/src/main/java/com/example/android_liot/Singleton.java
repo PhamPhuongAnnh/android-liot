@@ -16,7 +16,18 @@ public class Singleton {
 
     public boolean loggedIn = false;
     public String username;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String name;
     public String password;
+
     public String selectedIp;
     public Stack<JSONObject> properties = new Stack<JSONObject>();
 
